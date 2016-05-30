@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+.DS_Store
+*.sw[po]
+*.xpi
+*.pyc
+logs/
+dist/
+data/content/
+firefox/
+config.yml
+.amo_config.json
