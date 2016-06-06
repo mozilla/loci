@@ -1,0 +1,105 @@
+.spotlight {
+  font-size: 14px;
+  margin-right: -$base-gutter;
+
+  ul.spotlight-list {
+    align-items: flex-start;
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .context-menu {
+    top: 14px;
+    right: -12px;
+  }
+}
+
+.spotlight-item {
+  @include item-shadow;
+  @include tile-close;
+  background: $white;
+  display: inline-block;
+  margin-right: $base-gutter;
+  width: $spotlight-item-width;
+  border-radius: $border-radius;
+  height: $spotlight-item-height;
+  position: relative;
+  @media (min-width: $break-point) {
+    flex-shrink: 0;
+  }
+
+  .inner-border {
+    border-color: $faintest-black;
+  }
+
+  > a {
+    display: block;
+    color: inherit;
+  }
+
+  .spotlight-image {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: $spotlight-img-height;
+    border-radius: $border-radius $border-radius 0 0;
+
+    &.portrait {
+      background-position: top center;
+    }
+  }
+
+  .spotlight-icon {
+    border-radius: 3px;
+    left: $spotlight-icon-gutter;
+    overflow: hidden;
+    position: absolute;
+    top: $spotlight-icon-gutter;
+  }
+
+  .spotlight-title {
+    margin: 0 0 $spotlight-title-margin-bottom;
+    font-size: inherit;
+    line-height: inherit;
+    word-wrap: break-word;
+  }
+
+  &:hover .spotlight-title {
+    color: $link-blue;
+  }
+
+  .spotlight-info {
+    padding: $spotlight-padding;
+  }
+
+  .spotlight-text {
+    max-height: $spotlight-text-height;
+    overflow: hidden;
+  }
+
+  .spotlight-description {
+    font-size: $spotlight-font-size;
+    margin: 0;
+  }
+
+  .spotlight-context {
+    padding: $spotlight-padding;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    color: $light-grey;
+    font-size: 11px;
+    overflow: hidden;
+  }
+
+  &.spotlight-placeholder {
+    background: $placeholder-background;
+    border: $placeholder-border;
+    box-shadow: none;
+    height: $spotlight-item-height;
+  }
+}
