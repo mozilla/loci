@@ -1,4 +1,5 @@
 {
+  "devtools.debugger.prompt-connection": false,
   "xpinstall.signatures.required": false,
   "extensions.@loci.sdk.console.logLevel": "info"
 }
