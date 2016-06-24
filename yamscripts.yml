@@ -39,12 +39,6 @@ scripts:
     checkbinary: echo "JPM_FIREFOX_BINARY: ${JPM_FIREFOX_BINARY}"
     # test:jpm: Run jpm tests
     jpm: jpm test -b ${JPM_FIREFOX_BINARY:-"firefox"} --prefs ./test-prefs.json
-    # test:karma: Run content tests only
-    karma: NODE_ENV=test karma start
-    post: cat logs/reports/coverage/text-summary.txt
-
-# tdd: Run content tests continuously
-  tdd: =>test:karma -- --no-single-run --browsers Chrome
 
 # package: Build add-on
   package: =>bundle && jpm xpi && mv @loci-$npm_package_version.xpi dist/loci-$npm_package_version.xpi
