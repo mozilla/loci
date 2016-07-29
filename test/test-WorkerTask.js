@@ -8,6 +8,29 @@ const taskOptions = {
   type: "fts",
 };
 
+const testTasks = [
+  {
+    pageUrl: "https://foo.bar",
+    type: "fts",
+  },
+  {
+    pageUrl: "https://foo.bar",
+    type: "metadata",
+  },
+  {
+    pageUrl: "https://foo.bar",
+    type: "image-extraction",
+  },
+  {
+    pageUrl: "https://example.com",
+    type: "fts",
+  },
+  {
+    pageUrl: "https://example.com",
+    type: "metadata",
+  }
+];
+
 exports["test Task status setting"] = function(assert) {
   let task = new WorkerTask(taskOptions.pageUrl, taskOptions.type);
   assert.equal(task.status, TASK_NEW, "Task created with new status");
@@ -74,6 +97,29 @@ exports["test save task"] = function*(assert) {
   // Get the changed task from the database and compare it again
   savedTask = yield WorkerTask.asyncGetById(task.id);
   assert.deepEqual(task, savedTask, "Modified saved task was recovered");
+
+  // Drops the database and closes the connection
+  yield storage.asyncDropTables();
+  yield storage.asyncCloseConnection();
+};
+
+exports["test getting tasks by url"] = function*(assert) {
+  // Initialize the database
+  let storage = new Storage();
+  yield storage.asyncCreateTables();
+
+  let emptyTasks = yield WorkerTask.asyncGetByUrl("https://foo.bar");
+  assert.equal(emptyTasks, null, "No tasks created for this url.");
+
+  // Create new tasks and saves them
+  for (let taskData of testTasks) {
+    let newTask = new WorkerTask(taskData.pageUrl, taskData.type);
+    yield newTask.save();
+    assert.ok(newTask.id, "Task has an id assigned to it.");
+  }
+
+  let tasks = yield WorkerTask.asyncGetByUrl("https://foo.bar");
+  assert.equal(tasks.length, 3, "Tasks created for this domain.");
 
   // Drops the database and closes the connection
   yield storage.asyncDropTables();

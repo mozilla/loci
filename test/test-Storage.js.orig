@@ -98,12 +98,21 @@ exports["test saving a file and reading from it"] = function*(assert) {
   yield Storage.saveFile(filename, FILE_CONTENT);
   let fileContent = yield Storage.getFile(filename);
   assert.equal(fileContent, FILE_CONTENT);
+<<<<<<< 07f2efead82c8211db5081150eb64aba73478e1f
   yield Storage.removeFile(filename);
 };
 
 exports["test reading from an inexistent file gets rejected"] = function*(assert) {
-  const file = yield Storage.getFile("no-file-here");
-  assert.equal(file, null, "Returned null for an inexistent file");
+  assert.equal(yield Storage.getFile("no-file-here"), null, "Returned null for an inexistent file");
+=======
+  Storage.removeFile(filename);
+};
+
+exports["test reading from an inexistent file gets rejected"] = function*(assert) {
+  Storage.getFile("no-file-here")
+    .then(()=>assert.ok(false, "Resolved with a non existent file."))
+    .catch(()=>assert.ok(true, "Rejected non-existent file."));
+>>>>>>> feat(workers): #4 Message to task router
 };
 
 exports["test saving to existing file overwrites"] = function*(assert) {
@@ -116,7 +125,11 @@ exports["test saving to existing file overwrites"] = function*(assert) {
   let uppercaseFileContent = yield Storage.getFile(filename);
   assert.equal(uppercaseFileContent, FILE_CONTENT.toUpperCase());
   assert.notEqual(uppercaseFileContent, fileContent);
+<<<<<<< 07f2efead82c8211db5081150eb64aba73478e1f
   yield Storage.removeFile(filename);
+=======
+  Storage.removeFile(filename);
+>>>>>>> feat(workers): #4 Message to task router
 };
 
 before(exports, function*() {
