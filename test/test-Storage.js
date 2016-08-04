@@ -24,6 +24,14 @@ exports["test that tables are created"] = function*(assert) {
   assert.ok(tasksTable.length, "Found a moz_tasks table");
 };
 
+exports["test that indexes are created"] = function*(assert) {
+  let taskIndexes = yield STORAGE.asyncExecuteCached("check task indexes", "PRAGMA INDEX_LIST(moz_tasks);");
+  assert.equal(taskIndexes.length, 2, "Task table have 2 indexes"); // ROWID is not shown by this function
+
+  let pageIndexes = yield STORAGE.asyncExecuteCached("check page indexes", "PRAGMA INDEX_LIST(moz_pages);");
+  assert.equal(pageIndexes.length, 1, "Pages table have 1 index");
+};
+
 exports["test inserting, selecting and deleting a page"] = function*(assert) {
   const insertPage = `INSERT INTO moz_pages (url, maxAge, createdAt, remote)
                       VALUES (:url, :maxAge, :createdAt, :remote);`;
