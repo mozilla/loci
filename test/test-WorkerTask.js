@@ -1,5 +1,6 @@
 "use strict";
 
+const {before, after} = require("sdk/test/utils");
 const {WorkerTask, TASK_NEW, TASK_WORKING, TASK_DONE} = require("lib/task-queue/WorkerTask");
 const {Storage} = require("lib/task-queue/Storage");
 
@@ -7,6 +8,31 @@ const taskOptions = {
   pageUrl: "https://foo.bar",
   type: "fts",
 };
+
+const testTasks = [
+  {
+    pageUrl: "https://foo.bar",
+    type: "fts",
+  },
+  {
+    pageUrl: "https://foo.bar",
+    type: "metadata",
+  },
+  {
+    pageUrl: "https://foo.bar",
+    type: "image-extraction",
+  },
+  {
+    pageUrl: "https://example.com",
+    type: "fts",
+  },
+  {
+    pageUrl: "https://example.com",
+    type: "metadata",
+  }
+];
+
+let STORAGE;
 
 exports["test Task status setting"] = function(assert) {
   let task = new WorkerTask(taskOptions.pageUrl, taskOptions.type);
@@ -54,10 +80,6 @@ exports["test Task serialization and deserialization"] = function(assert) {
 };
 
 exports["test save task"] = function*(assert) {
-  // Initialize the database
-  let storage = new Storage();
-  yield storage.asyncCreateTables();
-
   // Create new task and saves it
   let task = new WorkerTask(taskOptions.pageUrl, taskOptions.type);
   yield task.save();
@@ -74,10 +96,46 @@ exports["test save task"] = function*(assert) {
   // Get the changed task from the database and compare it again
   savedTask = yield WorkerTask.asyncGetById(task.id);
   assert.deepEqual(task, savedTask, "Modified saved task was recovered");
-
-  // Drops the database and closes the connection
-  yield storage.asyncDropTables();
-  yield storage.asyncCloseConnection();
 };
+
+exports["test getting tasks by url"] = function*(assert) {
+  let emptyTasks = yield WorkerTask.asyncGetByUrl("https://foo.bar");
+  assert.equal(emptyTasks, null, "No tasks created for this url.");
+
+  // Create new tasks and saves them
+  for (let taskData of testTasks) {
+    let newTask = new WorkerTask(taskData.pageUrl, taskData.type);
+    yield newTask.save();
+    assert.ok(newTask.id, "Task has an id assigned to it.");
+  }
+
+  let tasks = yield WorkerTask.asyncGetByUrl("https://foo.bar");
+  assert.equal(tasks.length, 3, "Tasks created for this domain.");
+};
+
+exports["test if url exists"] = function*(assert) {
+  const emptyTasks = yield WorkerTask.asyncGetByUrl("https://foo.bar");
+  assert.equal(emptyTasks, null, "No tasks created for this url.");
+
+  const newTask = new WorkerTask("https://foo.bar", "metadata");
+  yield newTask.save();
+  assert.ok(newTask.id, "Task has an id assigned to it.");
+
+  const taskFound = yield WorkerTask.asyncURLExists("https://foo.bar");
+  assert.ok(taskFound, "Task found for existing url");
+
+  const taskNotFound = yield WorkerTask.asyncURLExists("https://bar.foo");
+  assert.ok(!taskNotFound, "Task not found for inexistent url");
+};
+
+before(exports, function*() {
+  STORAGE = Storage.instance();
+  yield STORAGE.asyncCreateTables();
+});
+
+after(exports, function*() {
+  yield STORAGE.asyncDropTables();
+  yield STORAGE.asyncCloseConnection();
+});
 
 require("sdk/test").run(exports);
