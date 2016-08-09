@@ -130,8 +130,10 @@ exports["test if file exists on system"] = function*(assert) {
   const filename = "testfile";
   yield Storage.asyncSaveFile(filename, FILE_CONTENT);
 
-  assert.ok(yield Storage.asyncFileExists(filename), "The file exists");
-  assert.ok(!(yield Storage.asyncFileExists("not a file name")), "The file does not exists");
+  let fileExists = yield Storage.asyncFileExists(filename);
+  assert.ok(fileExists, "The file exists");
+  fileExists = yield Storage.asyncFileExists("not a file name");
+  assert.ok(!fileExists, "The file does not exists");
 };
 
 before(exports, function*() {

@@ -73,7 +73,8 @@ exports["test sends one message and wait for results"] = function*(assert) {
   const router = new TaskRouter(routeMap);
   router.handleMessage(message);
 
-  assert.equal(yield deferred.promise, "1", "Worker returned");
+  let deferredWorkers = yield deferred.promise;
+  assert.equal(deferredWorkers, "1", "Worker returned");
 };
 
 exports["test sends multiple messages"] = function*(assert) {
