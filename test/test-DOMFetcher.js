@@ -14,6 +14,8 @@ const {TextDecoder, OS} = Cu.import("resource://gre/modules/osfile.jsm", {});
 const PORT = 8099;
 const URL = `http://localhost:${PORT}/dummy.html`;
 const OTHER_URL = `http://localhost:${PORT}/other-dummy.html`;
+const CANONICAL_DUMMY_URL = `http://localhost:${PORT}/canonical-dummy.html`;
+const CANONICAL_URL = "https://example.com/";
 
 let SRV;
 let DUMMY_DOM;
@@ -27,6 +29,7 @@ function contentCompare(stringA, stringB) {
 exports["test DOM fetching when tab closed"] = function(assert, done) {
   let domFetcher = new DOMFetcher((message)=> {
     assert.equal(message.data.type, "document-content", "the message received have the right type");
+    assert.ok(!message.data.data.urlIsCanonical, "The fetched URL is not canonical");
     assert.ok(contentCompare(message.data.data.data, DUMMY_DOM), "fetched DOM should be equal to the url content");
     domFetcher.uninit();
     done();
@@ -43,6 +46,7 @@ exports["test DOM fetching when location change"] = function(assert, done) {
       setTimeout(()=>openTab.close(), 500);
     } else {
       assert.equal(message.data.data.url, OTHER_URL, "the message passes the correct url.");
+      assert.ok(!message.data.data.urlIsCanonical, "The fetched URL is not canonical");
       assert.ok(contentCompare(message.data.data.data, OTHER_DUMMY_DOM), "fetched DOM should be equal to the second url content.");
       domFetcher.uninit();
       done();
@@ -53,6 +57,18 @@ exports["test DOM fetching when location change"] = function(assert, done) {
     tab.url = OTHER_URL;
   });
   tabs.open({url: URL});
+};
+
+exports["test DOM fetching with canonical link element"] = function(assert, done) {
+  let domFetcher = new DOMFetcher((message)=> {
+    assert.equal(message.data.type, "document-content", "the message received have the right type");
+    assert.ok(message.data.data.urlIsCanonical, "The fetched url is canonical");
+    assert.equal(message.data.data.url, CANONICAL_URL, "fetched url is the canonical one");
+    domFetcher.uninit();
+    done();
+  });
+  tabs.once("ready", tab => tab.close());
+  tabs.open({url: CANONICAL_DUMMY_URL});
 };
 
 before(exports, function*() {
