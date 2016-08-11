@@ -3,8 +3,9 @@
   position: absolute;
   font-size: $context-menu-font-size;
   box-shadow: $context-menu-shadow;
-  top: 100%;
-  right: 0;
+  top: ($link-menu-button-size / 4);
+  left: 100%;
+  margin-left: 5px;
   z-index: 10000;
   background: $bg-grey;
   border-radius: $context-menu-border-radius;
@@ -15,13 +16,19 @@
     list-style: none;
 
     > li {
+      &.separator {
+        margin: $context-menu-outer-padding 0;
+        border-bottom: 1px solid $context-menu-border-color;
+      }
+
       > a {
         cursor: pointer;
         color: inherit;
-        display: block;
         white-space: nowrap;
         padding: $context-menu-item-padding;
-        line-height: 1;
+        line-height: $icon-size;
+        display: flex;
+        align-items: center;
 
         &:hover {
           background: $star-blue;

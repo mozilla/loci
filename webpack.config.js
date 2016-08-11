@@ -2,7 +2,7 @@
 const WebpackNotifierPlugin = require("webpack-notifier");
 const webpack = require("webpack");
 const path = require("path");
-const absolute = (relPath) => path.join(__dirname, relPath);
+const absolute = relPath => path.join(__dirname, relPath);
 const EnvLoaderPlugin = require("webpack-env-loader-plugin");
 
 const srcPath = absolute("./content-src/main.js");
@@ -11,7 +11,7 @@ const outputFilename = "bundle.js";
 
 let env = process.env.NODE_ENV || "development";
 
-let plugins =  [
+let plugins = [
   new WebpackNotifierPlugin(),
   new EnvLoaderPlugin({
     env,
@@ -30,9 +30,7 @@ if (env === "production") {
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.UglifyJsPlugin({
       test: /vendor/,
-      compress: {
-        warnings: false
-      }
+      compress: {warnings: false}
     }),
     new webpack.optimize.DedupePlugin()
   ]);
@@ -49,7 +47,7 @@ module.exports = {
   },
   output: {
     path: outputDir,
-    filename: outputFilename,
+    filename: outputFilename
   },
   target: "web",
   resolve: {

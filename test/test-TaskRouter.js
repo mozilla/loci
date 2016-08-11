@@ -15,8 +15,8 @@ Cu.import("resource://gre/modules/Task.jsm");
 
 let STORAGE = Storage.instance();
 
-exports["test TaskRouter needs a map parameter"] = function*(assert) {
-  assert.throws(()=>new TaskRouter(null), /TaskRouter needs a map as argument/, "Can't construct without arguments.");
+exports["test TaskRouter needs a map parameter"] = function(assert) {
+  assert.throws(() => new TaskRouter(null), /TaskRouter needs a map as argument/, "Can't construct without arguments.");
 };
 
 exports["test if url needs processing"] = function*(assert) {
@@ -60,7 +60,7 @@ exports["test sends one message and wait for results"] = function*(assert) {
     type: "test1",
     data: {
       url: "http://foo.bar",
-      data: "<html></html>",
+      data: "<html></html>"
     }
   };
 
@@ -79,40 +79,40 @@ exports["test sends one message and wait for results"] = function*(assert) {
 
 exports["test sends multiple messages"] = function*(assert) {
   const messages = [{
-      type: "test1",
-      data: {
-        url: "http://foo.bar",
-        data: "<html>1</html>",
-      }
-    },
+    type: "test1",
+    data: {
+      url: "http://foo.bar",
+      data: "<html>1</html>"
+    }
+  },
     {
       type: "test1",
       data: {
         url: "http://bar.foo",
-        data: "<html>2</html>",
+        data: "<html>2</html>"
       }
     },
     {
       type: "test1",
       data: {
         url: "http://bar.foo", // Duplicate url, should not be processed
-        data: "<html>3</html>",
+        data: "<html>3</html>"
       }
     },
     {
       type: "test2",
       data: {
         url: "http://example.com",
-        data: "<html>4</html>",
+        data: "<html>4</html>"
       }
     },
     {
       type: "test2",
       data: {
         url: "http://example.org",
-        data: "<html>5</html>",
+        data: "<html>5</html>"
       }
-    },
+    }
   ];
   const deferredTp1 = PromiseUtils.defer();
   const deferredTp2 = PromiseUtils.defer();
@@ -135,19 +135,19 @@ exports["test sends multiple messages"] = function*(assert) {
 
 exports["test one message type, multiple processors"] = function*(assert) {
   const messages = [{
-      type: "test1",
-      data: {
-        url: "http://foo.bar",
-        data: "<html>1</html>",
-      }
-    },
+    type: "test1",
+    data: {
+      url: "http://foo.bar",
+      data: "<html>1</html>"
+    }
+  },
     {
       type: "test1",
       data: {
         url: "http://bar.foo",
-        data: "<html>2</html>",
+        data: "<html>2</html>"
       }
-    },
+    }
   ];
 
   const deferredTp1 = PromiseUtils.defer();

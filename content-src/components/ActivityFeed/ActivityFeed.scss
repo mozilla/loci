@@ -21,6 +21,7 @@
 }
 
 .feed-item {
+  @include link-menu-button;
   display: flex;
   align-items: center;
   position: relative;
@@ -41,7 +42,7 @@
   &:first-child {
     &::before {
       margin-top: -($feed-circle-size / 2);
-      top: 50%;
+      top: 32px;
     }
   }
 
@@ -72,7 +73,7 @@
     height: $feed-circle-size;
     left: $feed-gutter-h + 3;
     position: absolute;
-    top: 50%;
+    top: 28px;
     width: $feed-circle-size;
     margin-top: -($feed-circle-size / 2);
   }
@@ -82,7 +83,7 @@
   }
 
   &.bookmark .star {
-    background: url('img/glyph-bookmark-16-blue.svg') no-repeat center center;
+    background: url('#{$image-path}glyph-bookmark-16-blue.svg') no-repeat center center;
     background-size: 18px;
     border: 0;
     height: 18px;
@@ -92,47 +93,7 @@
     left: $feed-gutter-h - 2;
   }
 
-  .action-items-container {
-    background: $bg-grey;
-    border: solid 1px $faintest-black;
-    border-radius: $border-radius;
-    position: absolute;
-    right: -5px;
-    bottom: -5px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: center;
-    opacity: 0;
-  }
-
-  .action-item {
-    cursor: pointer;
-    width: 40px;
-    height: 32px;
-    background-position: center center;
-    background-repeat: no-repeat;
-    border-right: solid 1px $faintest-black;
-    padding: 10px 8px;
-
-    &:last-child {
-      border-right: 0;
-    }
-
-    &.icon-more {
-      background-image: url('img/glyph-more-16.svg');
-    }
-
-    &.icon-delete {
-      background-image: url('img/glyph-delete-16.svg');
-    }
-
-    &.icon-share {
-      background-image: url('img/glyph-share-16.svg');
-    }
-  }
-
-  &.fixed,
+  &.active,
   &:hover {
     background: $feed-hover-color;
     border: 1px solid $faintest-black;
@@ -194,6 +155,10 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       color: $link-blue;
+
+      &::after {
+        content: attr(data-feed-url);
+      }
     }
   }
 
@@ -201,5 +166,11 @@
     color: $feed-date-font-color;
     flex-shrink: 0;
     text-align: right;
+  }
+
+  .last-visit {
+    &::after {
+      content: attr(data-last-visit);
+    }
   }
 }

@@ -28,7 +28,7 @@ DocumentUnloadMessenger.prototype = {
    */
   _addWindowListeners(event) {
     let window = event.target.defaultView;
-    if (window === this.cfmm.content) { //we don't want to get iframes
+    if (window === this.cfmm.content) { // we don't want to get iframes
       window.addEventListener("unload", this._sendContentMessage, false);
     }
   },
@@ -52,7 +52,7 @@ DocumentUnloadMessenger.prototype = {
         data: content.document.documentElement.outerHTML
       }
     });
-  },
+  }
 };
 
 let DUMessenger = new DocumentUnloadMessenger();

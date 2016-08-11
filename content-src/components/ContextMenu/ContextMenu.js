@@ -21,10 +21,22 @@ const ContextMenu = React.createClass({
     return (<span hidden={!this.props.visible} className="context-menu">
       <ul>
         {this.props.options.map((option, i) => {
-          return (<li key={i}><a className="context-menu-link" onClick={() => {
-            this.props.onUpdate(false);
-            option.onClick();
-          }}>{option.label}</a></li>);
+          if (option.type === "separator") {
+            return (<li key={i} className="separator" />);
+          }
+          return (<li key={i}><a
+            className="context-menu-link"
+            ref={option.ref}
+            onClick={() => {
+              this.props.onUpdate(false);
+              option.onClick();
+              if (option.userEvent) {
+                this.props.onUserEvent(option.userEvent);
+              }
+            }}>
+            {option.icon && <span className={`icon icon-spacer icon-${option.icon}`} />}
+            {option.label}
+          </a></li>);
         })}
       </ul>
     </span>);
@@ -34,9 +46,14 @@ const ContextMenu = React.createClass({
 ContextMenu.propTypes = {
   visible: React.PropTypes.bool,
   onUpdate: React.PropTypes.func.isRequired,
+  onUserEvent: React.PropTypes.func,
   options: React.PropTypes.arrayOf(React.PropTypes.shape({
-    label: React.PropTypes.string.isRequired,
-    onClick: React.PropTypes.func.isRequired
+    type: React.PropTypes.string,
+    label: React.PropTypes.string,
+    icon: React.PropTypes.string,
+    onClick: React.PropTypes.func,
+    userEvent: React.PropTypes.string,
+    ref: React.PropTypes.string
   })).isRequired
 };
 

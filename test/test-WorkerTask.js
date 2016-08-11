@@ -6,29 +6,29 @@ const {Storage} = require("lib/task-queue/Storage");
 
 const taskOptions = {
   pageUrl: "https://foo.bar",
-  type: "fts",
+  type: "fts"
 };
 
 const testTasks = [
   {
     pageUrl: "https://foo.bar",
-    type: "fts",
+    type: "fts"
   },
   {
     pageUrl: "https://foo.bar",
-    type: "metadata",
+    type: "metadata"
   },
   {
     pageUrl: "https://foo.bar",
-    type: "image-extraction",
+    type: "image-extraction"
   },
   {
     pageUrl: "https://example.com",
-    type: "fts",
+    type: "fts"
   },
   {
     pageUrl: "https://example.com",
-    type: "metadata",
+    type: "metadata"
   }
 ];
 
@@ -45,7 +45,7 @@ exports["test Task status setting"] = function(assert) {
 
 exports["test Task invalid status setting throws"] = function(assert) {
   let task = new WorkerTask(taskOptions.pageUrl, taskOptions.type);
-  assert.throws(()=> task.status = "not a valid status", /Invalid task status/, "Invalid task status throws.");
+  assert.throws(() => {task.status = "not a valid status";}, /Invalid task status/, "Invalid task status throws.");
 };
 
 exports["test Task job started"] = function(assert) {
@@ -53,7 +53,7 @@ exports["test Task job started"] = function(assert) {
   assert.equal(task.jobStartedAt, null, "New task job started time is null.");
   assert.equal(task.status, TASK_NEW, "Task created with new status");
   task.jobStarted();
-  assert.ok(()=> task.jobStartedAt <= Date.now() && task.jobStartedAt > task.createdAt,
+  assert.ok(() => task.jobStartedAt <= Date.now() && task.jobStartedAt > task.createdAt,
             "Task job started time assigned.");
   assert.equal(task.status, TASK_WORKING, "Task status is now working.");
 };
@@ -65,7 +65,7 @@ exports["test Task serialization and deserialization"] = function(assert) {
     createdAt: Date.now() - 3600,
     jobStartedAt: Date.now(),
     status: "new",
-    type: "fts",
+    type: "fts"
   };
 
   // Creates a new task from the fullTask object

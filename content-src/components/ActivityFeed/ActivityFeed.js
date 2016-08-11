@@ -3,7 +3,6 @@ const {connect} = require("react-redux");
 const {justDispatch} = require("selectors/selectors");
 const {actions} = require("common/action-manager");
 const SiteIcon = require("components/SiteIcon/SiteIcon");
-const DeleteMenu = require("components/DeleteMenu/DeleteMenu");
 const {prettyUrl, getRandomFromTimestamp} = require("lib/utils");
 const moment = require("moment");
 const classNames = require("classnames");
@@ -22,19 +21,14 @@ const CALENDAR_HEADINGS = {
 
 const ActivityFeedItem = React.createClass({
   getInitialState() {
-    return {
-      showContextMenu: false
-    };
+    return {showContextMenu: false};
   },
   getDefaultProps() {
     return {
-      onShare: function() {},
-      onClick: function() {},
+      onShare() {},
+      onClick() {},
       showDate: false
     };
-  },
-  onDeleteClick() {
-    this.setState({showContextMenu: true});
   },
   render() {
     const site = this.props;
@@ -63,39 +57,27 @@ const ActivityFeedItem = React.createClass({
       dateLabel = moment(date).format("h:mm A");
     }
 
-    return (<li className={classNames("feed-item", {bookmark: site.bookmarkGuid, fixed: this.state.showContextMenu})}>
+    return (<li className={classNames("feed-item", {bookmark: site.bookmarkGuid, active: this.state.showContextMenu})}>
       <a onClick={this.props.onClick} href={site.url} ref="link">
         <span className="star" hidden={!site.bookmarkGuid} />
         {icon}
         <div className="feed-details">
           <div className="feed-description">
             <h4 className="feed-title" ref="title">{title}</h4>
-            <span className="feed-url" ref="url">{prettyUrl(site.url)}</span>
+            <span className="feed-url" ref="url" data-feed-url={prettyUrl(site.url)} />
+            {this.props.preview}
           </div>
           <div className="feed-stats">
-            <div ref="lastVisit">{dateLabel}</div>
+            <div ref="lastVisit" className="last-visit" data-last-visit={dateLabel} />
           </div>
         </div>
       </a>
-      <div className="action-items-container">
-        <div className="action-item icon-delete" ref="delete" onClick={this.onDeleteClick}></div>
-        <div className="action-item icon-share" ref="share" onClick={() => this.props.onShare(site.url)}></div>
-        <div className="action-item icon-more" onClick={() => alert("Sorry. We are still working on this feature.")}></div>
-      </div>
-      <DeleteMenu
-        visible={this.state.showContextMenu}
-        onUpdate={val => this.setState({showContextMenu: val})}
-        url={site.url}
-        bookmarkGuid={site.bookmarkGuid}
-        page={this.props.page}
-        index={this.props.index}
-        source={this.props.source}
-        />
     </li>);
   }
 });
 
 ActivityFeedItem.propTypes = {
+  preview: React.PropTypes.object,
   page: React.PropTypes.string,
   source: React.PropTypes.string,
   index: React.PropTypes.number,
@@ -108,10 +90,21 @@ ActivityFeedItem.propTypes = {
   type: React.PropTypes.string,
   dateDisplay: React.PropTypes.number,
   provider_display: React.PropTypes.string,
-  parsedUrl: React.PropTypes.shape({
-    hostname: React.PropTypes.string
-  })
+  parsedUrl: React.PropTypes.shape({hostname: React.PropTypes.string})
 };
+
+function groupSitesBySession(sites) {
+  const sessions = [[]];
+  sites.forEach((site, i) => {
+    const currentSession = sessions[sessions.length - 1];
+    const nextSite = sites[i + 1];
+    currentSession.push(site);
+    if (nextSite && Math.abs(site.dateDisplay - nextSite.dateDisplay) > SESSION_DIFF) {
+      sessions.push([]);
+    }
+  });
+  return sessions;
+}
 
 function groupSitesByDate(sites) {
   let groupedSites = new Map();
@@ -134,19 +127,6 @@ function groupSitesByDate(sites) {
   return groupedSites;
 }
 
-function groupSitesBySession(sites) {
-  const sessions = [[]];
-  sites.forEach((site, i) => {
-    const currentSession = sessions[sessions.length - 1];
-    const nextSite = sites[i + 1];
-    currentSession.push(site);
-    if (nextSite && Math.abs(site.dateDisplay - nextSite.dateDisplay) > SESSION_DIFF) {
-      sessions.push([]);
-    }
-  });
-  return sessions;
-}
-
 const GroupedActivityFeed = React.createClass({
   getDefaultProps() {
     return {
@@ -166,7 +146,7 @@ const GroupedActivityFeed = React.createClass({
   },
   onShareFactory(index) {
     return url => {
-      alert("Sorry. We are still working on this feature.");
+      alert("Sorry. We are still working on this feature."); // eslint-disable-line no-alert
       this.props.dispatch(actions.NotifyEvent({
         event: "SHARE",
         page: this.props.page,
@@ -176,23 +156,31 @@ const GroupedActivityFeed = React.createClass({
     };
   },
   render() {
+    let maxPreviews = this.props.maxPreviews;
     const sites = this.props.sites
       .slice(0, this.props.length)
-      .map(site => {
-        return Object.assign({}, site, {dateDisplay: site[this.props.dateKey]});
-      });
+      .map(site => Object.assign({}, site, {dateDisplay: site[this.props.dateKey]}));
     const groupedSites = groupSitesByDate(sites);
     let globalCount = -1;
     return (<div className="grouped-activity-feed">
-      {Array.from(groupedSites.keys()).map((date, dateIndex) => {
-        return (<div className="group" key={date}>
+      {Array.from(groupedSites.keys()).map((date, dateIndex) =>
+        (<div className="group" key={date}>
           {this.props.showDateHeadings &&
             <h3 className="section-title">{moment(date).startOf("day").calendar(null, CALENDAR_HEADINGS)}</h3>
           }
-          {groupedSites.get(date).map((sites, outerIndex) => {
-            return (<ul key={date + "-" + outerIndex} className="activity-feed">
+          {groupedSites.get(date).map((sites, outerIndex) =>
+            (<ul key={`${date}-${outerIndex}`} className="activity-feed">
               {sites.map((site, i) => {
                 globalCount++;
+                let preview = null;
+                if (typeof maxPreviews === "undefined" || maxPreviews > 0) {
+                  if (preview && !preview.previewURL) {
+                    preview = null;
+                  }
+                  if (preview && maxPreviews >= 0) {
+                    maxPreviews -= 1;
+                  }
+                }
                 return (<ActivityFeedItem
                     key={site.guid || i}
                     onClick={this.onClickFactory(globalCount)}
@@ -202,12 +190,13 @@ const GroupedActivityFeed = React.createClass({
                     page={this.props.page}
                     source="ACTIVITY_FEED"
                     showDate={!this.props.showDateHeadings && outerIndex === 0 && i === 0}
+                    preview={preview}
                     {...site} />);
               })}
-            </ul>);
-          })}
-        </div>);
-      })}
+            </ul>)
+          )}
+        </div>)
+      )}
     </div>);
   }
 });

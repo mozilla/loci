@@ -28,20 +28,14 @@ const DebugPage = React.createClass({
           <div className="form-group">
             <label>Data Source</label>
             <select value={this.state.dataSource} onChange={e => this.setState({dataSource: e.target.value})}>
-              {Object.keys(this.props.raw).map(source => {
-                return (<option key={source} value={source}>{source}</option>);
-              })}
+              {Object.keys(this.props.raw).map(source => (<option key={source} value={source}>{source}</option>))}
             </select>
           </div>
         </div>
         <div>
           {this.state.component === "Spotlight" &&
             <div className="spotlight">
-              {selectSpotlight({
-                Highlights: this.props.raw[this.state.dataSource]
-              }).rows.map((item, i) => {
-                return (<SpotlightItem key={i} {...item} />);
-              })}
+              {selectSpotlight({Highlights: this.props.raw[this.state.dataSource]}).rows.map((item, i) => (<SpotlightItem key={i} {...item} />))}
             </div>
           }
           {this.state.component === "TopSites" &&
@@ -60,16 +54,14 @@ const DebugPage = React.createClass({
   }
 });
 
-module.exports = connect(state => {
-  return {
-    newTab: selectNewTabSites(state),
-    raw: {
-      TopSites: state.TopSites,
-      History: state.History,
-      Bookmarks: state.Bookmarks,
-      Highlights: state.Highlights,
-    }
-  };
-})(DebugPage);
+module.exports = connect(state => ({
+  newTab: selectNewTabSites(state),
+  raw: {
+    TopSites: state.TopSites,
+    History: state.History,
+    Bookmarks: state.Bookmarks,
+    Highlights: state.Highlights
+  }
+}))(DebugPage);
 
 module.exports.DebugPage = DebugPage;

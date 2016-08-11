@@ -27,11 +27,10 @@ module.exports = {
   getRandomColor(key) {
     if (key && typeof key === "number") {
       return RANDOM_COLORS[key % 10];
-    }  else if (key && typeof key === "string") {
+    } else if (key && typeof key === "string") {
       return RANDOM_COLORS[key.charCodeAt(0) % 10];
-    } else {
-      return RANDOM_COLORS[Math.floor(Math.random() * RANDOM_COLORS.length)];
     }
+    return RANDOM_COLORS[Math.floor(Math.random() * RANDOM_COLORS.length)];
   },
 
   prettyUrl(url) {

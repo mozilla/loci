@@ -10,7 +10,7 @@ Cu.import("resource://gre/modules/Services.jsm");
 exports["test enqueue"] = function*(assert) {
   let workerURL = getResourceURL("test/resources/echo-worker.js");
   let tp = new TaskProcessor(workerURL, 1);
-  tp.handleResults = (data) => {
+  tp.handleResults = data => {
     assert.equal(0, tp.numFreeWorkers, "there are no free workers");
     assert.equal(1, data.id, "expected ID matches up");
   };
@@ -25,7 +25,7 @@ exports["test delay"] = function*(assert) {
   let tp = new TaskProcessor(workerURL, 1, 5);
   let count = 0;
   let numTasks = 10;
-  tp.handleResults = (data) => {
+  tp.handleResults = data => {
     count += 1;
     if (count === numTasks) {
       assert.equal(count, numTasks, "handleResults called an expected number of times");
@@ -63,7 +63,7 @@ exports["test concurrency"] = function*(assert) {
   let numTasks = 10;
   let numWorkers = 5;
   let tp = new TaskProcessor(workerURL, numWorkers, 5);
-  tp.handleResults = (data) => {};
+  tp.handleResults = data => {};
 
   let freeNumbers = new Set();
   let countPromise = new Promise(resolve => {
@@ -112,7 +112,7 @@ exports["test handleResults required"] = function*(assert) {
 exports["test handleResults exceptions are handled"] = function*(assert) {
   let workerURL = getResourceURL("test/resources/echo-worker.js");
   let tp = new TaskProcessor(workerURL, 1);
-  tp.handleResults = (data) => {throw new Error("foo");};
+  tp.handleResults = data => {throw new Error("foo");};
   let errored = false;
   try {
     yield tp.enqueue({id: 1});
@@ -127,11 +127,9 @@ exports["test handleResults can return promises"] = function*(assert) {
   let expectedValue = 5;
   let workerURL = getResourceURL("test/resources/echo-worker.js");
   let tp = new TaskProcessor(workerURL, 1);
-  tp.handleResults = (data) => {
-    return new Promise(resolve => {
-      resolve(expectedValue);
-    });
-  };
+  tp.handleResults = data => new Promise(resolve => {
+    resolve(expectedValue);
+  });
   let value = yield tp.enqueue({id: 1});
   assert.equal(value, expectedValue, "handleResults can return promises");
 };
@@ -140,7 +138,7 @@ exports["test results error handling"] = function*(assert) {
   // the error-worker throws an exception on every odd number of invocations
   let workerURL = getResourceURL("test/resources/error-worker.js");
   let tp = new TaskProcessor(workerURL, 1);
-  tp.handleResults = (data) => {};
+  tp.handleResults = data => {};
 
   let errored = false;
   try {

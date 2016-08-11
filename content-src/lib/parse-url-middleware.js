@@ -2,7 +2,6 @@ const urlParse = require("url-parse");
 const am = require("common/action-manager");
 
 module.exports = () => next => action => {
-
   if (!am.ACTIONS_WITH_SITES.has(action.type)) {
     return next(action);
   }
@@ -22,5 +21,5 @@ module.exports = () => next => action => {
     return Object.assign({}, site, {parsedUrl});
   }).filter(item => item);
 
-  next(Object.assign({}, action, {data}));
+  return next(Object.assign({}, action, {data}));
 };
