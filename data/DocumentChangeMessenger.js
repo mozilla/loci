@@ -40,10 +40,15 @@ DocumentUnloadMessenger.prototype = {
    *   the unload event object.
    */
   _sendContentMessage(event) {
+    // Tries to get the canonical URL for a page
+    const canonicalLink = content.document.querySelector('link[rel="canonical"]');
+    const url = canonicalLink ? canonicalLink.href : content.location.href;
+    const urlIsCanonical = Boolean(canonicalLink);
     sendAsyncMessage("loci@document-metadata", {
       type: "document-content",
       data: {
-        url: content.location.href,
+        url,
+        urlIsCanonical,
         data: content.document.documentElement.outerHTML
       }
     });
