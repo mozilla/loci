@@ -15,7 +15,7 @@ function getBackgroundRGB(site) {
   }
 
   const favicon = site.favicon_url || site.favicon;
-  const parsedUrl = site.parsedUrl || urlParse(site.url || "") ;
+  const parsedUrl = site.parsedUrl || urlParse(site.url || "");
   const label = prettyUrl(parsedUrl.hostname);
   return favicon ? DEFAULT_FAVICON_BG_COLOR : getRandomColor(label);
 }
@@ -33,7 +33,7 @@ const selectSpotlight = module.exports.selectSpotlight = createSelector(
   [
     state => state.Highlights
   ],
-  (Highlights) => {
+  Highlights => {
     const rows = Highlights.rows
     // Only concat first run data if init is true
     .map(site => {
@@ -51,9 +51,8 @@ const selectSpotlight = module.exports.selectSpotlight = createSelector(
         return 0;
       } else if (site2Valid) {
         return 1;
-      } else {
-        return -1;
       }
+      return -1;
     });
     return Object.assign({}, Highlights, {rows});
   }
@@ -63,11 +62,7 @@ const selectTopSites = module.exports.selectTopSites = createSelector(
   [
     state => state.TopSites
   ],
-  (TopSites) => {
-    return Object.assign({}, TopSites, {
-      rows: TopSites.rows
-    });
-  }
+  TopSites => Object.assign({}, TopSites, {rows: TopSites.rows})
 );
 
 module.exports.selectNewTabSites = createSelector(
@@ -77,7 +72,6 @@ module.exports.selectNewTabSites = createSelector(
     selectSpotlight
   ],
   (TopSites, History, Spotlight) => {
-
     // Remove duplicates
     // Note that we have to limit the length of topsites, spotlight so we
     // don't dedupe against stuff that isn't shown
@@ -98,7 +92,7 @@ const selectSiteIcon = createSelector(
   site => site,
   site => {
     const favicon = site.favicon_url || site.favicon;
-    const parsedUrl = site.parsedUrl || urlParse(site.url || "") ;
+    const parsedUrl = site.parsedUrl || urlParse(site.url || "");
     const label = prettyUrl(parsedUrl.hostname);
     const backgroundRGB = getBackgroundRGB(site);
     const backgroundColor = site.background_color || toRGBString(...backgroundRGB, favicon ? BACKGROUND_FADE : 1);
@@ -121,12 +115,10 @@ module.exports.selectHistory = createSelector(
     selectSpotlight,
     state => state.History
   ],
-  (Spotlight, History) => {
-    return {
-      Spotlight,
-      History
-    };
-  }
+  (Spotlight, History) => ({
+    Spotlight,
+    History
+  })
 );
 
 // Timeline Bookmarks

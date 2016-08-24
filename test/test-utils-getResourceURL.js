@@ -2,7 +2,7 @@
 
 const {baseURI, getResourceURL} = require("lib/utils");
 
-exports["test resource paths"] = function*(assert) {
+exports["test resource paths"] = function(assert) {
   assert.equal(getResourceURL("some/path.file"), `${baseURI}some/path.file`, "relative paths work");
   assert.equal(getResourceURL("/some/path.file"), `${baseURI}some/path.file`, "extra slashes are handled");
 };

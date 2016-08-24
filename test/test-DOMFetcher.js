@@ -27,7 +27,7 @@ function contentCompare(stringA, stringB) {
 }
 
 exports["test DOM fetching when tab closed"] = function(assert, done) {
-  let domFetcher = new DOMFetcher((message)=> {
+  let domFetcher = new DOMFetcher(message => {
     assert.equal(message.data.type, "document-content", "the message received have the right type");
     assert.ok(!message.data.data.urlIsCanonical, "The fetched URL is not canonical");
     assert.ok(contentCompare(message.data.data.data, DUMMY_DOM), "fetched DOM should be equal to the url content");
@@ -40,10 +40,10 @@ exports["test DOM fetching when tab closed"] = function(assert, done) {
 
 exports["test DOM fetching when location change"] = function(assert, done) {
   let openTab;
-  let domFetcher = new DOMFetcher((message)=> {
+  let domFetcher = new DOMFetcher(message => {
     if (message.data.data.url === URL) {
       assert.ok(contentCompare(message.data.data.data, DUMMY_DOM), "fetched DOM should be equal to the first url content.");
-      setTimeout(()=>openTab.close(), 500);
+      setTimeout(() => openTab.close(), 500);
     } else {
       assert.equal(message.data.data.url, OTHER_URL, "the message passes the correct url.");
       assert.ok(!message.data.data.urlIsCanonical, "The fetched URL is not canonical");
@@ -52,7 +52,7 @@ exports["test DOM fetching when location change"] = function(assert, done) {
       done();
     }
   });
-  tabs.once("ready", (tab)=> {
+  tabs.once("ready", tab => {
     openTab = tab;
     tab.url = OTHER_URL;
   });
@@ -60,7 +60,7 @@ exports["test DOM fetching when location change"] = function(assert, done) {
 };
 
 exports["test DOM fetching with canonical link element"] = function(assert, done) {
-  let domFetcher = new DOMFetcher((message)=> {
+  let domFetcher = new DOMFetcher(message => {
     assert.equal(message.data.type, "document-content", "the message received have the right type");
     assert.ok(message.data.data.urlIsCanonical, "The fetched url is canonical");
     assert.equal(message.data.data.url, CANONICAL_URL, "fetched url is the canonical one");

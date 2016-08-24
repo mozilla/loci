@@ -1,26 +1,28 @@
 const fakeData = require("lib/fake-data");
 const faker = require("test/faker");
+const {ADDON_TO_CONTENT, CONTENT_TO_ADDON} = require("common/event-constants");
 
 function dispatch(action) {
   window.dispatchEvent(
-    new CustomEvent("addon-to-content", {detail: action})
+    new CustomEvent(ADDON_TO_CONTENT, {detail: action})
   );
 }
 
 module.exports = function() {
-  window.addEventListener("content-to-addon", function(event) {
+  window.addEventListener(CONTENT_TO_ADDON, event => {
     const action = JSON.parse(event.detail);
     switch (action.type) {
       case "TOP_FRECENT_SITES_REQUEST":
-        dispatch({type: "TOP_FRECENT_SITES_RESPONSE", data: fakeData.TopSites.rows.map(site => {
-          return Object.assign({}, site, {
+        dispatch({
+          type: "TOP_FRECENT_SITES_RESPONSE",
+          data: fakeData.TopSites.rows.map(site => Object.assign({}, site, { // eslint-disable-line object-curly-newline
             // images: [],
             // favicon: null,
             // favicon_url: null,
             // favicon_colors: null,
             // description: null
-          });
-        })});
+          })) // eslint-disable-line object-curly-newline
+        });
         break;
       case "RECENT_BOOKMARKS_REQUEST":
         if (action.meta && action.meta.append) {

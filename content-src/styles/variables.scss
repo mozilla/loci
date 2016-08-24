@@ -41,8 +41,10 @@ $tile-border: 1px $white;
 $tile-title-bg-color: rgba($white, 0.6);
 $tile-title-hover-color: $white;
 $tile-title-font-size: 11px;
-$tile-close-border: 1px solid rgba($black, 0.2);
-$tile-close-boxshadow: 0 2px 0 rgba($black, 0.1);
+
+$link-menu-button-size: 27px;
+$link-menu-button-border: 1px solid rgba($black, 0.2);
+$link-menu-button-boxshadow: 0 2px 0 rgba($black, 0.1);
 
 $feed-font-size: 12px;
 $feed-date-font-color: #BFBFBF;
@@ -57,7 +59,7 @@ $feed-line-color: rgba($black, 0.05);
 $feed-circle-color: #CECECE;
 
 $spotlight-padding: $base-gutter / 2;
-$spotlight-item-height: 262px;
+$spotlight-item-height: 270px;
 $spotlight-item-width: ($wrapper-max-width - $base-gutter * 2) / 3;
 $spotlight-img-height: 130px;
 $spotlight-text-height: 86px;
@@ -84,6 +86,9 @@ $search-shadow: rgba(96, 181, 255, 0.75);
 $search-button-grey: #FBFBFB;
 $search-button-border-color: #D4D4D4;
 $search-button-width: 64px;
+$search-text: #666;
+$search-section-background: #F7F7F7;
+$search-border-color: #EAEAEA;
 
 $placeholder-background: transparent;
 $placeholder-border: 1px solid $faintest-black;
@@ -93,11 +98,26 @@ $item-shadow-hover: 0 1px 0 0 $faintest-black, 0 0 0 5px $faintest-black;
 
 $loader-size: 16px;
 
-$context-menu-shadow: 0 5px 10px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.2);
+$context-menu-border-color: rgba(0, 0, 0, 0.2);
+$context-menu-shadow: 0 5px 10px rgba(0, 0, 0, 0.3), 0 0 0 1px $context-menu-border-color;
 $context-menu-font-size: 14px;
 $context-menu-border-radius: 5px;
 $context-menu-outer-padding: 5px;
-$context-menu-item-padding: 3px 20px;
+$context-menu-item-padding: 3px 12px;
+
+$icon-size: 16px;
+
+$image-path: 'img/';
+
+$tooltip-height: 50px;
+$tooltip-background-color: #FFF3CE;
+$tooltip-border-radius: 5px;
+$tooltip-border-properties:  1px solid rgba(0, 0, 0, 0.27);
+$tooltip-box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14);
+$tooltip-padding: 10px 30px;
+$tooltip-anchor-width: 8px;
+$tooltip-anchor-height: 8px;
+$tooltip-anchor-margin: -42px 0 0 -24px;
 
 @mixin item-shadow {
   box-shadow: $item-shadow;
@@ -108,6 +128,38 @@ $context-menu-item-padding: 3px 20px;
     transition: box-shadow 150ms;
   }
 }
+
+@mixin link-menu-button {
+  &:hover,
+  &.active {
+    .link-menu-button {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+
+@mixin list-items {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+@mixin list-link {
+  cursor: default;
+  color: $black;
+  display: block;
+
+  &:hover,
+  &.active {
+    background: $search-blue;
+    color: $bg-color;
+  }
+}
+
+
+$tile-close-border: 1px solid rgba($black, 0.2);
+$tile-close-boxshadow: 0 2px 0 rgba($black, 0.1);
 
 @mixin tile-close {
   .tile-close-icon {

@@ -16,11 +16,11 @@ const TEST_URLS = [
   "https://www.example.com",
   "https://example.com/page1",
   "https://example.com/page2",
-  "https://example.com?query=true",
+  "https://example.com?query=true"
 ];
 
 exports["test instantiation"] = function(assert) {
-  assert.throws(()=>new Page({}), /URL must be defined/, "Page needs at least an url to be instantiated");
+  assert.throws(() => new Page({}), /URL must be defined/, "Page needs at least an url to be instantiated");
 };
 
 exports["test Page serialization"] = function(assert) {
@@ -28,7 +28,7 @@ exports["test Page serialization"] = function(assert) {
     url: "https://foo.bar",
     maxAge: DEFAULT_MAX_AGE,
     remote: false,
-    createdAt: Date.now(),
+    createdAt: Date.now()
   };
 
   // Creates a new page
@@ -63,7 +63,7 @@ exports["test saving multiple pages and getting each one"] = function*(assert) {
   yield storage.asyncCreateTables();
 
   let savePromises = [];
-  TEST_URLS.map(function(url) {
+  TEST_URLS.forEach(url => {
     let page = new Page({url});
     savePromises.push(page.save());
   });

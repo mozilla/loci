@@ -13,14 +13,10 @@ const FILE_CONTENT = "Lorem ipsum dolor sit amet, no dolor epicuri posidonium us
 
 exports["test that tables are created"] = function*(assert) {
   let tableCheckSQL = "SELECT name FROM sqlite_master WHERE type='table' AND name=:name";
-  let pagesTable = yield STORAGE.asyncExecuteCached("check pages table existence", tableCheckSQL, {
-    params: {name: "moz_pages"}
-  });
+  let pagesTable = yield STORAGE.asyncExecuteCached("check pages table existence", tableCheckSQL, {params: {name: "moz_pages"}});
   assert.ok(pagesTable.length, "Found a moz_pages table");
 
-  let tasksTable = yield STORAGE.asyncExecuteCached("check tasks table existence", tableCheckSQL, {
-    params: {name: "moz_tasks"}
-  });
+  let tasksTable = yield STORAGE.asyncExecuteCached("check tasks table existence", tableCheckSQL, {params: {name: "moz_tasks"}});
   assert.ok(tasksTable.length, "Found a moz_tasks table");
 };
 
@@ -41,7 +37,7 @@ exports["test inserting, selecting and deleting a page"] = function*(assert) {
     const selectPage = "SELECT url, maxAge, createdAt, remote FROM moz_pages WHERE url = :url;";
     return yield STORAGE.asyncExecuteCached("select page", selectPage, {
       columns: ["url", "maxAge", "createdAt", "remote"],
-      params: {url},
+      params: {url}
     });
   });
 
@@ -49,7 +45,8 @@ exports["test inserting, selecting and deleting a page"] = function*(assert) {
     url: "http://foo.bar",
     maxAge: 1467225044,
     createdAt: null,
-    remote: 0};
+    remote: 0
+  };
 
   let page = yield requestPage(params.url);
   assert.equal(page.length, 0, "The table is empty.");
@@ -74,7 +71,7 @@ exports["test inserting, selecting and deleting a task"] = function*(assert) {
     const selectTask = "SELECT id, pageUrl, createdAt, jobStartedAt, status, type FROM moz_tasks WHERE id = :id;";
     return yield STORAGE.asyncExecuteCached("select task", selectTask, {
       columns: ["id", "pageUrl", "createdAt", "jobStartedAt", "status", "type"],
-      params: {id},
+      params: {id}
     });
   });
   let params = {
